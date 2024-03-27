@@ -1,0 +1,26 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    command: python replicate_scrapping.py
+    networks:
+      - mynetwork
+
+  db:
+    image: mysql:8.0.27
+    ports:
+      - "3307:3307"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: replicate
+    mem_limit: 2g
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:

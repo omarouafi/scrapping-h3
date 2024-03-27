@@ -1,0 +1,7 @@
+{
+    "host":"db",    
+    "user":"root",
+    "password":"password",
+    "database":"replicate",
+    "port" : 3307
+}
