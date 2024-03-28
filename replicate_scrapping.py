@@ -13,7 +13,6 @@ def initialize_driver():
     options = Options()
     options.add_argument("--disable-extensions")
     options.add_argument("--ignore-certificate-errors")
-    # options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     
 
@@ -81,13 +80,33 @@ def insert_model(engine, model_name, model_description, model_example_images):
         cursor.close()
         engine.close()
 
-
 def get_text_to_image_models(model_soup):
     model_name = model_soup.select_one('h3').text
     model_description = model_soup.select_one('p.mt-1.max-w-xl').text.strip()
     model_examples = model_soup.select('div.mb-2lh.h-40.overflow-hidden div img')
-    images_src = model_example_images = [img['data-src'] for img in model_examples]
-    return model_name, model_description, images_src
+    model_number_of_runs_element = model_soup.select_one('span:contains("runs")')
+
+    if model_number_of_runs_element:
+        model_number_of_runs_text = model_number_of_runs_element.text
+        number_of_runs_unit = model_number_of_runs_text.split(" ")[0][-2]
+        model_number_of_runs = model_number_of_runs_text.split(" ")[0][:-2]
+        print(model_number_of_runs, number_of_runs_unit)
+
+        if model_number_of_runs.isdigit():
+            print(model_number_of_runs.isdigit())
+            model_number_of_runs = int(model_number_of_runs)
+            if number_of_runs_unit == "K":
+                model_number_of_runs *= 1000
+            elif number_of_runs_unit == "M":
+                model_number_of_runs *= 1000000
+        else:
+            model_number_of_runs = None
+    else:
+        model_number_of_runs = None
+
+    images_src = [img['data-src'] for img in model_examples]
+
+    return model_name, model_description, images_src,model_number_of_runs
 
 
 
@@ -106,7 +125,7 @@ def main():
         model_soup = goToPage(driver, model_url)
         time.sleep(10)
 
-        model_name, model_description, model_example_images = get_text_to_image_models(model_soup)
+        model_name, model_description, model_example_images,model_number_of_runs = get_text_to_image_models(model_soup)
         model_example_images = ",".join(model_example_images)
         engine = init_db()
         insert_model(engine, model_name, model_description, model_example_images)
@@ -160,7 +179,7 @@ def generate_image(prompt):
 
     driver.quit()
 
-
-# main()
+# generate_image("A small bird with a red head and a white belly")
+main()
     
 # init_db()
