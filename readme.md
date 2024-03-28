@@ -60,13 +60,6 @@ python replicate_scrapping.py
 - `replicate_scrapping.ipynb` et `replicate_scrapping.py`: Scripts pour le scraping des modèles de Replicate.
 - `requirements.txt`: Les dépendances Python nécessaires pour exécuter le script.
 
-## Comment exécuter le projet
-
-1. Assurez-vous que Docker est installé sur votre machine.
-2. Construisez l'image Docker avec la commande suivante : `docker-compose build`.
-3. Lancez le conteneur Docker avec la commande suivante : `docker-compose up`.
-4. Le script Python commencera à s'exécuter et à scraper les données du site web de Replicate.
-
 ## Dépendances
 
 Ce projet utilise les packages Python suivants :
