@@ -2,6 +2,43 @@
 
 Ce projet utilise Selenium, BeautifulSoup et MySQL pour scraper les modèles de la collection "text-to-image" sur le site web de Replicate.
 
+## Avec Docker
+
+Pour commencer avec Docker, suivez ces étapes :
+
+### 1. Construire l'image Docker :
+
+```bash
+docker-compose build
+```
+
+### 2. Lancer l'application avec Docker Compose :
+
+```bash
+docker-compose up
+```
+
+
+## Avec replicate_scrapping.py
+
+
+### 1. Configuration de la Base de Données et du Projet :
+
+Avant de commencer, assurez-vous d'avoir MySQL installé sur votre système et créer une base de données nommée "replicate"
+
+
+### 2. Installer les dépendances :
+ 
+
+```bash
+pip install -r requirements.txt
+```
+### 3. Lancer le script :
+
+```bash
+python replicate_scrapping.py
+```
+
 ## Structure du projet
 - .ipynb_checkpoints/
     - replicate_scrapping-checkpoint.ipynb
