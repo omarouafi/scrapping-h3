@@ -8,6 +8,8 @@ from bs4 import BeautifulSoup
 import mysql.connector
 import json
 import requests
+import json
+import math
 
 def initialize_driver():
     options = Options()
@@ -31,18 +33,17 @@ def goToPage(driver, url):
     return soup
 
 
+
 def init_db():
     try:
-        configJsonFile = open("config.json", "r")
-        configJson = configJsonFile.read()
-        configJson = json.loads(configJson)
-        print(configJson)
+        with open('config.json') as f:
+            config = json.load(f)
+
         conn = mysql.connector.connect(
-            host=configJson["host"],
-            user=configJson["user"],
-            password=configJson["password"],
-            database=configJson["database"],
-            port=configJson["port"]
+            host=config['host'],
+            user=config['user'],
+            password=config['password'],
+            database=config['database']
         )
 
         cursor = conn.cursor()
@@ -51,7 +52,8 @@ def init_db():
             id INT AUTO_INCREMENT PRIMARY KEY,
             name VARCHAR(255) NOT NULL,
             description TEXT NOT NULL,
-            image TEXT NOT NULL
+            image TEXT NOT NULL,
+            number_of_runs FLOAT NULL
         )"""
 
         cursor.execute(create_table_query)
@@ -65,9 +67,10 @@ def init_db():
         return None
     
 
-def insert_model(engine, model_name, model_description, model_example_images):
+
+def insert_model(engine, model_name, model_description, model_example_images,number_of_runs):
     try:
-        query = f"INSERT INTO models (name, description, image) VALUES ('{model_name}', '{model_description}', '{model_example_images}')"
+        query = f"INSERT INTO models (name, description, image, number_of_runs) VALUES ('{model_name}', '{model_description}', '{model_example_images}', '{number_of_runs}')"
         cursor = engine.cursor()    
         cursor.execute(query)
         engine.commit()
@@ -80,8 +83,10 @@ def insert_model(engine, model_name, model_description, model_example_images):
         cursor.close()
         engine.close()
 
+
+
 def get_text_to_image_models(model_soup):
-    model_name = model_soup.select_one('h3').text
+    model_name = model_soup.select_one('h3').text.strip()
     model_description = model_soup.select_one('p.mt-1.max-w-xl').text.strip()
     model_examples = model_soup.select('div.mb-2lh.h-40.overflow-hidden div img')
     model_number_of_runs_element = model_soup.select_one('span:contains("runs")')
@@ -90,11 +95,9 @@ def get_text_to_image_models(model_soup):
         model_number_of_runs_text = model_number_of_runs_element.text
         number_of_runs_unit = model_number_of_runs_text.split(" ")[0][-2]
         model_number_of_runs = model_number_of_runs_text.split(" ")[0][:-2]
-        print(model_number_of_runs, number_of_runs_unit)
 
-        if model_number_of_runs.isdigit():
-            print(model_number_of_runs.isdigit())
-            model_number_of_runs = int(model_number_of_runs)
+        if not math.isnan(float(model_number_of_runs)):
+            model_number_of_runs = float(model_number_of_runs)
             if number_of_runs_unit == "K":
                 model_number_of_runs *= 1000
             elif number_of_runs_unit == "M":
@@ -105,11 +108,8 @@ def get_text_to_image_models(model_soup):
         model_number_of_runs = None
 
     images_src = [img['data-src'] for img in model_examples]
-
-    return model_name, model_description, images_src,model_number_of_runs
-
-
-
+    print(model_number_of_runs)
+    return model_name, model_description, images_src, model_number_of_runs
 
 def main():
     driver = initialize_driver()

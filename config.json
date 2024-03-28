@@ -1,7 +1,7 @@
 {
-    "host":"db",    
+    "host":"localhost",  
     "user":"root",
-    "password":"password",
+    "password":"",
     "database":"replicate",
-    "port" : 3307
+    "port" : 3306
 }
