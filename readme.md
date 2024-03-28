@@ -26,6 +26,7 @@ docker-compose up
 
 Avant de commencer, assurez-vous d'avoir MySQL installé sur votre système et créer une base de données nommée "replicate"
 
+Configurer les paramètres de connexion à la base de données dans le fichier `config.json`
 
 ### 2. Installer les dépendances :
  
